@@ -32,3 +32,4 @@
 /Users/paunradu/Developer/Programare/Projects/ExpenseTracker/obj/Debug/net8.0/ExpenseTracker.pdb
 /Users/paunradu/Developer/Programare/Projects/ExpenseTracker/obj/Debug/net8.0/ExpenseTracker.genruntimeconfig.cache
 /Users/paunradu/Developer/Programare/Projects/ExpenseTracker/obj/Debug/net8.0/ref/ExpenseTracker.dll
+/Users/paunradu/Developer/Programare/Projects/ExpenseTracker/obj/Debug/net8.0/ExpenseTracker.sourcelink.json

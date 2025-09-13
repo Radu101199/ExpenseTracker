@@ -1,3 +1,4 @@
+using ExpenseTracker.DTOs;
 using ExpenseTracker.Models;
 using ExpenseTracker.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -15,13 +16,24 @@ public class ExpenseController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Expense>> GetAll()
+    public ActionResult<IEnumerable<ExpenseDto>> GetAll()
     {
-        return Ok(_service.GetAllExpenses());
+        var expenses = _service.GetAllExpenses()
+            .Select(e => new ExpenseDto
+            {
+                Id = e.Id,
+                Title = e.Title,
+                Amount = e.Amount,
+                Date = e.Date,
+                CategoryId = e.CategoryId,
+                UserId = e.UserId
+            });
+
+        return Ok(expenses);
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Expense> getById(int id)
+    public ActionResult<Expense> GetById(int id)
     {
         var expense = _service.GetById(id);
         if (expense == null)
@@ -30,13 +42,34 @@ public class ExpenseController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult Add(Expense expense)
+    public ActionResult<ExpenseDto> Add([FromBody]CreateExpenseDto dto)
     {
+        var expense = new Expense
+        {
+            Title = dto.Title,
+            Amount = dto.Amount,
+            Date = dto.Date,
+            CategoryId = dto.CategoryId,
+            UserId = dto.UserId
+        };
+
         _service.Add(expense);
-        return CreatedAtAction(nameof(GetById), new { id = expense.Id }, expense);
+
+        var expenseDto = new ExpenseDto
+        {
+            Id = expense.Id,
+            Title = expense.Title,
+            Amount = expense.Amount,
+            Date = expense.Date,
+            CategoryId = expense.CategoryId,
+            UserId = expense.UserId
+        };
+
+        return CreatedAtAction(nameof(GetAll), new { id = expense.Id }, expenseDto);
+        
     }
     [HttpPut("id")]
-    public ActionResult Update(int id, Expense expense)
+    public ActionResult Update(int id,[FromBody] Expense expense)
     {
         if (id != expense.Id)
             return BadRequest();

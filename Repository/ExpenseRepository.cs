@@ -34,11 +34,9 @@ public class ExpenseRepository : IExpenseRepository
 
         public void Delete(int id)
         {
-                var expense = GetById(id);
+                var expense = _expenses.FirstOrDefault(e => e.Id == id);
                 if (expense != null)
-                {
                         _expenses.Remove(expense);
-                }
         }
 
 }
