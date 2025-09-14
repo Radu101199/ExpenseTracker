@@ -33,13 +33,24 @@ public class ExpenseController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public ActionResult<Expense> GetById(int id)
+    public ActionResult<ExpenseDto> GetById(int id)
     {
-        var expense = _service.GetById(id);
-        if (expense == null)
-            return NotFound();
-        return Ok(expense);
+        var e = _service.GetById(id);
+        if (e == null) return NotFound();
+
+        var dto = new ExpenseDto
+        {
+            Id = e.Id,
+            Title = e.Title,
+            Amount = e.Amount,
+            Date = e.Date,
+            CategoryId = e.CategoryId,
+            UserId = e.UserId,
+        };
+
+        return Ok(dto);
     }
+
 
     [HttpPost]
     public ActionResult<ExpenseDto> Add([FromBody]CreateExpenseDto dto)
@@ -65,24 +76,27 @@ public class ExpenseController : ControllerBase
             UserId = expense.UserId
         };
 
-        return CreatedAtAction(nameof(GetAll), new { id = expense.Id }, expenseDto);
+        return CreatedAtAction(nameof(GetById), new { id = expense.Id }, expenseDto);
         
     }
-    [HttpPut("id")]
-    public ActionResult Update(int id,[FromBody] Expense expense)
+    [HttpPut("{id}")]
+    public ActionResult Update(int id, [FromBody] UpdateExpenseDto dto)
     {
-        if (id != expense.Id)
-            return BadRequest();
-
         var existing = _service.GetById(id);
-        if (existing == null)
-            return NotFound();
+        if (existing == null) return NotFound();
 
-        _service.Update(expense);
+        existing.Title = dto.Title;
+        existing.Amount = dto.Amount;
+        existing.Date = dto.Date;
+        existing.CategoryId = dto.CategoryId;
+        existing.UserId = dto.UserId;
+
+        _service.Update(existing);
+
         return NoContent();
     }
     
-    [HttpDelete("id")]
+    [HttpDelete("{id}")]
     public ActionResult Delete(int id)
     {
         var existing = _service.GetById(id);

@@ -1,42 +1,44 @@
+using ExpenseTracker.Data;
 using ExpenseTracker.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpenseTracker.Repository;
 
 public class ExpenseRepository : IExpenseRepository
-{
-        private readonly List<Expense> _expenses = new()
+{       
+        private readonly AppDbContext _context;
+        public ExpenseRepository(AppDbContext context)
         {
-                new Expense { Id = 1, Title = "Coffee", Amount = 2.5m, Date = DateTime.Now, CategoryId = 1 },
-                new Expense { Id = 2, Title = "Groceries", Amount = 50m, Date = DateTime.Now, CategoryId = 2 }
-        };
+                _context = context;
+        }
 
-        public IEnumerable<Expense> GetAllExpenses() => _expenses;
+        public IEnumerable<Expense> GetAllExpenses() => _context.Expenses
+                .Include(e => e.Category).Include(e=>e.User).ToList();
 
-        public Expense? GetById(int id) => _expenses.FirstOrDefault(e => e.Id == id);
+        public Expense? GetById(int id) => _context.Expenses
+                .Include(e => e.Category).Include(e => e.User)
+                .FirstOrDefault(e => e.Id == id);
 
         public void Add(Expense expense)
         {
-                expense.Id = _expenses.Max(e => e.Id) + 1;
-                _expenses.Add(expense);
+                _context.Expenses.Add(expense);
+                _context.SaveChanges();
         }
 
         public void Update(Expense expense)
         {
-                var existing = GetById(expense.Id);
-                if (existing != null)
-                {
-                        existing.Title = expense.Title;
-                        existing.Amount = expense.Amount;
-                        existing.Date = expense.Date;
-                        existing.CategoryId = expense.CategoryId;
-                }
+                _context.Expenses.Update(expense);
+                _context.SaveChanges();
         }
 
         public void Delete(int id)
         {
-                var expense = _expenses.FirstOrDefault(e => e.Id == id);
+                var expense = _context.Expenses.Find(id);
                 if (expense != null)
-                        _expenses.Remove(expense);
+                {
+                        _context.Expenses.Remove(expense);
+                        _context.SaveChanges();
+                }
         }
 
 }
