@@ -24,7 +24,7 @@ public class ExpenseController : ControllerBase
                 Id = e.Id,
                 Title = e.Title,
                 Amount = e.Amount,
-                Date = e.Date,
+                Date = e.Date.ToUniversalTime(),
                 CategoryId = e.CategoryId,
                 UserId = e.UserId
             });
@@ -43,7 +43,7 @@ public class ExpenseController : ControllerBase
             Id = e.Id,
             Title = e.Title,
             Amount = e.Amount,
-            Date = e.Date,
+            Date = e.Date.ToUniversalTime(),
             CategoryId = e.CategoryId,
             UserId = e.UserId,
         };
@@ -59,7 +59,7 @@ public class ExpenseController : ControllerBase
         {
             Title = dto.Title,
             Amount = dto.Amount,
-            Date = dto.Date,
+            Date = dto.Date.ToUniversalTime(),
             CategoryId = dto.CategoryId,
             UserId = dto.UserId
         };
@@ -71,7 +71,7 @@ public class ExpenseController : ControllerBase
             Id = expense.Id,
             Title = expense.Title,
             Amount = expense.Amount,
-            Date = expense.Date,
+            Date = expense.Date.ToUniversalTime(),
             CategoryId = expense.CategoryId,
             UserId = expense.UserId
         };
@@ -87,7 +87,7 @@ public class ExpenseController : ControllerBase
 
         existing.Title = dto.Title;
         existing.Amount = dto.Amount;
-        existing.Date = dto.Date;
+        existing.Date = dto.Date.ToUniversalTime();
         existing.CategoryId = dto.CategoryId;
         existing.UserId = dto.UserId;
 
